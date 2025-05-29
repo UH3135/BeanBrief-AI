@@ -60,5 +60,5 @@ def question_delete(request, question_id):
     if request.user != question.author:
         messages.error(request, '삭제권한이 없습니다')
         return redirect('pybo:detail', question_id=question.id)
-    question.delete()
+    question.delete_question()
     return redirect('pybo:index')
