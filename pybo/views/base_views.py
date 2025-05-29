@@ -26,6 +26,15 @@ def index(request):
             Q(answer__author__username__icontains=keyword)
         ).distinct()
 
+    if keyword:
+        question_list = question_list.filter(
+            Q(subject__icontains=keyword) |
+            Q(content__icontains=keyword) |
+            Q(answer__content__icontains=keyword) |
+            Q(author__username__icontains=keyword) |
+            Q(answer__author__username__icontains=keyword)
+        ).distinct()
+
     # 페이징처리
     paginator = Paginator(question_list, 10)  # 페이지당 10개씩 보여주기
     page_obj = paginator.get_page(page)
