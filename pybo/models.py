@@ -24,12 +24,15 @@ class Question(models.Model):
             **kargs
         )
     
-    def update_question(self, subject: str, content: str):
+    def update_question(self, subject: str, content: str) -> 'Question':
         self.subject = subject
         self.content = content
         self.modify_date = timezone.now()
         self.save()
         return self
+
+    def delete_question(self) -> None:
+        self.delete()
 
 
 class Answer(models.Model):
