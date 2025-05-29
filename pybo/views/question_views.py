@@ -15,10 +15,11 @@ def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user  # 추가한 속성 author 적용
-            question.create_date = timezone.now()
-            question.save()
+            Question.create_question(
+                author=request.user,
+                subject=form.cleaned_data['subject'],
+                content=form.cleaned_data['content']
+            )
             return redirect('pybo:index')
     else:
         form = QuestionForm()

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class Question(models.Model):
@@ -12,6 +13,15 @@ class Question(models.Model):
 
     def __str__(self):
         return self.subject
+
+    @classmethod
+    def create_question(cls, author: str, subject: str, content: str) -> 'Question':
+        return cls.objects.create(
+            author=author,
+            subject=subject,
+            content=content,
+            create_date=timezone.now()
+        )
 
 
 class Answer(models.Model):
