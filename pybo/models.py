@@ -15,13 +15,21 @@ class Question(models.Model):
         return self.subject
 
     @classmethod
-    def create_question(cls, author: str, subject: str, content: str) -> 'Question':
+    def create_question(cls, author: 'User', subject: str, content: str, **kargs) -> 'Question':
         return cls.objects.create(
             author=author,
             subject=subject,
             content=content,
-            create_date=timezone.now()
+            create_date=timezone.now(),
+            **kargs
         )
+    
+    def update_question(self, subject: str, content: str):
+        self.subject = subject
+        self.content = content
+        self.modify_date = timezone.now()
+        self.save()
+        return self
 
 
 class Answer(models.Model):

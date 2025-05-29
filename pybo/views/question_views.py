@@ -40,10 +40,10 @@ def question_modify(request, question_id):
     if request.method == "POST":
         form = QuestionForm(request.POST, instance=question)
         if form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user
-            question.modify_date = timezone.now()  # 수정일시 저장
-            question.save()
+            question.update_question(
+                subject = form.cleaned_data['subject'],
+                content = form.cleaned_data['content']
+            )
             return redirect('pybo:detail', question_id=question.id)
     else:
         form = QuestionForm(instance=question)
