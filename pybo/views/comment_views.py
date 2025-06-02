@@ -16,11 +16,11 @@ def comment_create_question(request, question_id):
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user
-            comment.create_date = timezone.now()
-            comment.question = question
-            comment.save()
+            comment = Comment.create_comment(
+                author=request.user,
+                content=form.cleaned_data['content'],
+                question=question
+            )
             return redirect('{}#comment_{}'.format(
                 resolve_url('pybo:detail', question_id=comment.question.id), comment.id))
     else:
@@ -42,7 +42,10 @@ def comment_modify_question(request, comment_id):
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
-            comment = form.save(commit=False)
+            comment.update_comment(
+                author=request.user,
+                content=form.cleaned_data['content']
+            )
             comment.author = request.user
             comment.modify_date = timezone.now()
             comment.save()
@@ -64,7 +67,7 @@ def comment_delete_question(request, comment_id):
         messages.error(request, '댓글삭제권한이 없습니다')
         return redirect('pybo:detail', question_id=comment.question_id)
     else:
-        comment.delete()
+        comment.delete_comment()
     return redirect('pybo:detail', question_id=comment.question_id)
 
 
