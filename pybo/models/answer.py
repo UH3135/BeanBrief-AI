@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.db import models
 
 from .question import Question
@@ -11,3 +12,22 @@ class Answer(models.Model):
     create_date = models.DateTimeField()
     modify_date = models.DateTimeField(null=True, blank=True)
     voter = models.ManyToManyField(User, related_name='voter_answer')
+
+    @classmethod
+    def create_answer(cls, author:'User', question:'Question', content:str, **kwargs) -> 'Answer':
+        return cls.objects.create(
+            author=author,
+            question=question,
+            content=content,
+            create_date=timezone.now(),
+            **kwargs
+        )
+
+    def update_answer(self, content:str) -> 'Answer':
+        self.content=content
+        self.modify_date=timezone.now()
+        self.save()
+        return self
+
+    def delete_answer(self) -> None:
+        self.delete()
