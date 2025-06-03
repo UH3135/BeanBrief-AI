@@ -31,3 +31,6 @@ class Answer(models.Model):
 
     def delete_answer(self) -> None:
         self.delete()
+    
+    def add_voter(self, voter: 'User'):
+        self.voter.add(voter)

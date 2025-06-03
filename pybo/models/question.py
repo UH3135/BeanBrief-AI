@@ -43,3 +43,6 @@ class Question(models.Model):
 
     def delete_question(self) -> None:
         self.delete()
+    
+    def add_voter(self, voter: 'User'):
+        self.voter.add(voter)
