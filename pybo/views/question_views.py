@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
+from django.shortcuts import render, redirect
 
 from ..forms import QuestionForm
 from ..models import Question
@@ -32,7 +31,7 @@ def question_modify(request, question_id):
     """
     pybo 질문수정
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     if request.user != question.author:
         messages.error(request, '수정권한이 없습니다')
         return redirect('pybo:detail', question_id=question.id)
@@ -56,7 +55,7 @@ def question_delete(request, question_id):
     """
     pybo 질문삭제
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     if request.user != question.author:
         messages.error(request, '삭제권한이 없습니다')
         return redirect('pybo:detail', question_id=question.id)
