@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
-from django.db import models
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.db import models
+from typing import List
 
 
 class Question(models.Model):
@@ -23,6 +25,14 @@ class Question(models.Model):
             create_date=timezone.now(),
             **kargs
         )
+    
+    @classmethod
+    def get_all_questions(cls) -> List['Question']:
+        return cls.objects.order_by('-create_date')
+    
+    @classmethod
+    def get_question_by_id(cls, id: int) -> 'Question':
+        return get_object_or_404(cls, pk=id)
     
     def update_question(self, subject: str, content: str) -> 'Question':
         self.subject = subject

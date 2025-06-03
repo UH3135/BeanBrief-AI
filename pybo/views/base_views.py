@@ -12,7 +12,7 @@ def index(request):
     page = request.GET.get('page', '1')  # 페이지
 
     # 조회
-    question_list = Question.objects.order_by('-create_date')
+    question_list = Question.get_all_questions()
 
     # 페이징처리
     paginator = Paginator(question_list, 10)  # 페이지당 10개씩 보여주기
@@ -26,6 +26,6 @@ def detail(request, question_id):
     """
     pybo 내용 출력
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     context = {'question': question}
     return render(request, 'pybo/question_detail.html', context)
