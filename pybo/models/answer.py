@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db import models
 
@@ -22,6 +23,10 @@ class Answer(models.Model):
             create_date=timezone.now(),
             **kwargs
         )
+    
+    @classmethod
+    def get_answer_by_id(cls, id: int) -> 'Answer':
+        return get_object_or_404(cls, pk=id)
 
     def update_answer(self, content:str) -> 'Answer':
         self.content=content
