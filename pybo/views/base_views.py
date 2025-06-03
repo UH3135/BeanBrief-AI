@@ -14,7 +14,7 @@ def index(request):
     keyword = request.GET.get('kw', '')  # 키워드
 
     # 조회
-    question_list = Question.objects.order_by('-create_date')
+    question_list = Question.get_all_questions()
 
     if keyword:
         question_list = question_list.filter(
@@ -37,6 +37,6 @@ def detail(request, question_id):
     """
     pybo 내용 출력
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     context = {'question': question}
     return render(request, 'pybo/question_detail.html', context)
