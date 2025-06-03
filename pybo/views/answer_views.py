@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect, resolve_url
-from django.utils import timezone
+from django.shortcuts import render, redirect, resolve_url
 
 from ..forms import AnswerForm
 from ..models import Question, Answer
@@ -12,7 +11,7 @@ def answer_create(request, question_id):
     """
     pybo 답변등록
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     if request.method == "POST":
         form = AnswerForm(request.POST)
         if form.is_valid():
@@ -34,7 +33,7 @@ def answer_modify(request, answer_id):
     """
     pybo 답변수정
     """
-    answer = get_object_or_404(Answer, pk=answer_id)
+    answer = Answer.get_answer_by_id(id=answer_id)
     if request.user != answer.author:
         messages.error(request, '수정권한이 없습니다')
         return redirect('pybo:detail', question_id=answer.question.id)
@@ -58,7 +57,7 @@ def answer_delete(request, answer_id):
     """
     pybo 답변삭제
     """
-    answer = get_object_or_404(Answer, pk=answer_id)
+    answer = Answer.get_answer_by_id(id=answer_id)
     if request.user != answer.author:
         messages.error(request, '삭제권한이 없습니다')
     else:
