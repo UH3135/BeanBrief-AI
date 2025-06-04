@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect, resolve_url
-from django.utils import timezone
+from django.shortcuts import render, redirect, resolve_url
 
 from ..forms import AnswerForm
 from ..models import Question, Answer
@@ -12,15 +11,15 @@ def answer_create(request, question_id):
     """
     pybo 답변등록
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     if request.method == "POST":
         form = AnswerForm(request.POST)
         if form.is_valid():
-            answer = form.save(commit=False)
-            answer.author = request.user  # 추가한 속성 author 적용
-            answer.create_date = timezone.now()
-            answer.question = question
-            answer.save()
+            answer = Answer.create_answer(
+                author=request.user,  # 추가한 속성 author 적용
+                question=question,
+                content=form.cleaned_data['content']
+            )
             return redirect('{}#answer_{}'.format(
                 resolve_url('pybo:detail', question_id=question.id), answer.id))
     else:
@@ -34,7 +33,7 @@ def answer_modify(request, answer_id):
     """
     pybo 답변수정
     """
-    answer = get_object_or_404(Answer, pk=answer_id)
+    answer = Answer.get_answer_by_id(id=answer_id)
     if request.user != answer.author:
         messages.error(request, '수정권한이 없습니다')
         return redirect('pybo:detail', question_id=answer.question.id)
@@ -42,10 +41,9 @@ def answer_modify(request, answer_id):
     if request.method == "POST":
         form = AnswerForm(request.POST, instance=answer)
         if form.is_valid():
-            answer = form.save(commit=False)
-            answer.author = request.user
-            answer.modify_date = timezone.now()
-            answer.save()
+            answer.update_answer(
+                content=form.cleaned_data['content']
+            )
             return redirect('{}#answer_{}'.format(
                 resolve_url('pybo:detail', question_id=answer.question.id), answer.id))
     else:
@@ -59,9 +57,9 @@ def answer_delete(request, answer_id):
     """
     pybo 답변삭제
     """
-    answer = get_object_or_404(Answer, pk=answer_id)
+    answer = Answer.get_answer_by_id(id=answer_id)
     if request.user != answer.author:
         messages.error(request, '삭제권한이 없습니다')
     else:
-        answer.delete()
+        answer.delete_answer()
     return redirect('pybo:detail', question_id=answer.question.id)
