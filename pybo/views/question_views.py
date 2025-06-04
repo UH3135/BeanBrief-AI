@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 
 from ..forms import QuestionForm
 from ..models import Question
+from ..services import create_question
 
 
 @login_required(login_url='common:login')
@@ -14,7 +15,7 @@ def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
-            Question.create_question(
+            create_question(
                 author=request.user,
                 subject=form.cleaned_data['subject'],
                 content=form.cleaned_data['content']
