@@ -15,7 +15,7 @@ def index(request):
 
     # 조회
     question_list = Question.get_all_questions()
-
+    
     if keyword:
         question_list = question_list.filter(
             Q(subject__icontains=keyword) |
