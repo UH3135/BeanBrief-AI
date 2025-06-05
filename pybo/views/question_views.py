@@ -32,7 +32,7 @@ def question_modify(request, question_id):
     """
     pybo 질문수정
     """
-    question = Question.get_question_by_id(id=question_id)
+    question = QuestionService.get_question_by_id(id=question_id)
     if not QuestionService.check_author_permission(question, request.user):
         messages.error(request, '수정권한이 없습니다')
         return redirect('pybo:detail', question_id=question.id)

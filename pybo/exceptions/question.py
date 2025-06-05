@@ -15,3 +15,11 @@ class QuestionUpdateError(QuestionError):
 class QuestionDeleteError(QuestionError):
     """질문 삭제 중 발생하는 오류"""
     pass
+
+class QuestionPermissionError(QuestionError):
+    """권한 확인 중 발생하는 오류"""
+    pass
+
+class QuestionCallingError(QuestionError):
+    """질문 호출 중 발생하는 오류"""
+    pass
