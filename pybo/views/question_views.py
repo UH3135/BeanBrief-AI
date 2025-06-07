@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 
 from ..forms import QuestionForm
 from ..models import Question
+from ..services.question_service import QuestionService
 
 
 @login_required(login_url='common:login')
@@ -14,7 +15,7 @@ def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
-            Question.create_question(
+            QuestionService.create_question(
                 author=request.user,
                 subject=form.cleaned_data['subject'],
                 content=form.cleaned_data['content']
@@ -31,15 +32,16 @@ def question_modify(request, question_id):
     """
     pybo 질문수정
     """
-    question = Question.get_question_by_id(id=question_id)
-    if request.user != question.author:
+    question = QuestionService.get_question_by_id(id=question_id)
+    if not QuestionService.check_author_permission(question, request.user):
         messages.error(request, '수정권한이 없습니다')
         return redirect('pybo:detail', question_id=question.id)
 
     if request.method == "POST":
         form = QuestionForm(request.POST, instance=question)
         if form.is_valid():
-            question.update_question(
+            QuestionService.update_question(
+                question=question,
                 subject = form.cleaned_data['subject'],
                 content = form.cleaned_data['content']
             )
@@ -55,9 +57,9 @@ def question_delete(request, question_id):
     """
     pybo 질문삭제
     """
-    question = Question.get_question_by_id(id=question_id)
-    if request.user != question.author:
+    question = QuestionService.get_question_by_id(id=question_id)
+    if not QuestionService.check_author_permission(question, request.user):
         messages.error(request, '삭제권한이 없습니다')
         return redirect('pybo:detail', question_id=question.id)
-    question.delete_question()
+    QuestionService.delete_question(question)
     return redirect('pybo:index')

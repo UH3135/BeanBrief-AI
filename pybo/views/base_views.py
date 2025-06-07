@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 
 from ..models import Question
+from ..services.question_service import QuestionService
 
 
 def index(request):
@@ -14,8 +15,17 @@ def index(request):
     keyword = request.GET.get('kw', '')  # 키워드
 
     # 조회
-    question_list = Question.get_all_questions()
-    
+    question_list = QuestionService.get_all_questions()
+
+    if keyword:
+        question_list = question_list.filter(
+            Q(subject__icontains=keyword) |
+            Q(content__icontains=keyword) |
+            Q(answer__content__icontains=keyword) |
+            Q(author__username__icontains=keyword) |
+            Q(answer__author__username__icontains=keyword)
+        ).distinct()
+
     if keyword:
         question_list = question_list.filter(
             Q(subject__icontains=keyword) |
@@ -37,6 +47,6 @@ def detail(request, question_id):
     """
     pybo 내용 출력
     """
-    question = Question.get_question_by_id(id=question_id)
+    question = QuestionService.get_question_by_id(id=question_id)
     context = {'question': question}
     return render(request, 'pybo/question_detail.html', context)
