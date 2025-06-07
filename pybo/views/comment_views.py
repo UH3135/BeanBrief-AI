@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
+from django.shortcuts import render, redirect, resolve_url
 
 from ..forms import CommentForm
-from ..models import Question, Answer, Comment
+from ..models import Question
+from ..services.answer_service import AnswerService
+from ..services.comment_service import CommentService
 
 
 @login_required(login_url='common:login')
@@ -12,16 +13,17 @@ def comment_create_question(request, question_id):
     """
     pybo 질문댓글등록
     """
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.get_question_by_id(id=question_id)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user
-            comment.create_date = timezone.now()
-            comment.question = question
-            comment.save()
-            return redirect('pybo:detail', question_id=question.id)
+            comment = CommentService.create_comment(
+                author=request.user,
+                content=form.cleaned_data['content'],
+                question=question
+            )
+            return redirect('{}#comment_{}'.format(
+                resolve_url('pybo:detail', question_id=comment.question.id), comment.id))
     else:
         form = CommentForm()
     context = {'form': form}
@@ -33,19 +35,21 @@ def comment_modify_question(request, comment_id):
     """
     pybo 질문댓글수정
     """
-    comment = get_object_or_404(Comment, pk=comment_id)
-    if request.user != comment.author:
+    comment = CommentService.get_comment_by_id(id=comment_id)
+    if not CommentService.check_author_permission(comment, request.user):
         messages.error(request, '댓글수정권한이 없습니다')
         return redirect('pybo:detail', question_id=comment.question.id)
 
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user
-            comment.modify_date = timezone.now()
-            comment.save()
-            return redirect('pybo:detail', question_id=comment.question.id)
+            CommentService.update_comment(
+                comment=comment, 
+                author=request.user,
+                content=form.cleaned_data['content']
+            )
+            return redirect('{}#comment_{}'.format(
+                resolve_url('pybo:detail', question_id=comment.question.id), comment.id))
     else:
         form = CommentForm(instance=comment)
     context = {'form': form}
@@ -57,12 +61,12 @@ def comment_delete_question(request, comment_id):
     """
     pybo 질문댓글삭제
     """
-    comment = get_object_or_404(Comment, pk=comment_id)
-    if request.user != comment.author:
+    comment = CommentService.get_comment_by_id(id=comment_id)
+    if not CommentService.check_author_permission(comment, request.user):
         messages.error(request, '댓글삭제권한이 없습니다')
         return redirect('pybo:detail', question_id=comment.question_id)
     else:
-        comment.delete()
+        CommentService.delete_comment(comment)
     return redirect('pybo:detail', question_id=comment.question_id)
 
 
@@ -71,16 +75,17 @@ def comment_create_answer(request, answer_id):
     """
     pybo 답글댓글등록
     """
-    answer = get_object_or_404(Answer, pk=answer_id)
+    answer = AnswerService.get_answer_by_id(id=answer_id)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user
-            comment.create_date = timezone.now()
-            comment.answer = answer
-            comment.save()
-            return redirect('pybo:detail', question_id=comment.answer.question.id)
+            comment = CommentService.create_comment(
+                author=request.user,
+                content=form.cleaned_data['content'],
+                answer=answer
+            )
+            return redirect('{}#comment_{}'.format(
+                resolve_url('pybo:detail', question_id=comment.answer.question.id), comment.id))
     else:
         form = CommentForm()
     context = {'form': form}
@@ -92,19 +97,20 @@ def comment_modify_answer(request, comment_id):
     """
     pybo 답글댓글수정
     """
-    comment = get_object_or_404(Comment, pk=comment_id)
-    if request.user != comment.author:
+    comment = CommentService.get_comment_by_id(id=comment_id)
+    if not CommentService.check_author_permission(comment, request.user):
         messages.error(request, '댓글수정권한이 없습니다')
         return redirect('pybo:detail', question_id=comment.answer.question.id)
 
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user
-            comment.modify_date = timezone.now()
-            comment.save()
-            return redirect('pybo:detail', question_id=comment.answer.question.id)
+            comment.update_comment(
+                comment=comment,
+                content=form.cleaned_data['content']
+            )
+            return redirect('{}#comment_{}'.format(
+                resolve_url('pybo:detail', question_id=comment.answer.question.id), comment.id))
     else:
         form = CommentForm(instance=comment)
     context = {'form': form}
@@ -116,10 +122,10 @@ def comment_delete_answer(request, comment_id):
     """
     pybo 답글댓글삭제
     """
-    comment = get_object_or_404(Comment, pk=comment_id)
-    if request.user != comment.author:
+    comment = CommentService.get_comment_by_id(id=comment_id)
+    if not CommentService.check_author_permission(comment, request.user):
         messages.error(request, '댓글삭제권한이 없습니다')
         return redirect('pybo:detail', question_id=comment.answer.question.id)
     else:
-        comment.delete()
+        CommentService.delete_comment(comment)
     return redirect('pybo:detail', question_id=comment.answer.question.id)
