@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 {% load pybo_filter %}
 {% load pybo_filter %}
@@ -17,7 +16,7 @@
     <div class="row my-3">
         <div class="col-1"> <!-- 추천영역 -->
             <div class="bg-light text-center p-3 border font-weight-bolder mb-1">{{question.voter.count}}</div>
-            <a href="#" data-uri="{% url 'pybo:vote_question' question.id  %}"
+            <a href="#" data-uri="{% url 'beanbrief:vote_question' question.id  %}"
                class="recommend btn btn-sm btn-secondary btn-block my-1">추천</a>
         </div>
         <div class="col-11"> <!-- 질문영역 -->
@@ -38,10 +37,10 @@
                     </div>
                     {% if request.user == question.author %}
                     <div class="my-3">
-                        <a href="{% url 'pybo:question_modify' question.id  %}"
+                        <a href="{% url 'beanbrief:question_modify' question.id  %}"
                            class="btn btn-sm btn-outline-secondary">수정</a>
                         <a href="#" class="delete btn btn-sm btn-outline-secondary"
-                           data-uri="{% url 'pybo:question_delete' question.id  %}">삭제</a>
+                           data-uri="{% url 'beanbrief:question_delete' question.id  %}">삭제</a>
                     </div>
                     {% endif %}
                     <!-- 질문 댓글 Start -->
@@ -58,16 +57,16 @@
                                 {% endif %}
                             </span>
                             {% if request.user == comment.author %}
-                            <a href="{% url 'pybo:comment_modify_question' comment.id  %}" class="small">수정</a>,
+                            <a href="{% url 'beanbrief:comment_modify_question' comment.id  %}" class="small">수정</a>,
                             <a href="#" class="small delete"
-                               data-uri="{% url 'pybo:comment_delete_question' comment.id  %}">삭제</a>
+                               data-uri="{% url 'beanbrief:comment_delete_question' comment.id  %}">삭제</a>
                             {% endif %}
                         </div>
                     {% endfor %}
                     </div>
                     {% endif %}
                     <div>
-                        <a href="{% url 'pybo:comment_create_question' question.id  %}"
+                        <a href="{% url 'beanbrief:comment_create_question' question.id  %}"
                            class="small"><small>댓글 추가 ..</small></a>
                     </div>
                     <!-- 질문 댓글 End -->
@@ -81,7 +80,7 @@
     <div class="row my-3">
         <div class="col-1">  <!-- 추천영역 -->
             <div class="bg-light text-center p-3 border font-weight-bolder mb-1">{{answer.voter.count}}</div>
-            <a href="#" data-uri="{% url 'pybo:vote_answer' answer.id  %}"
+            <a href="#" data-uri="{% url 'beanbrief:vote_answer' answer.id  %}"
                 class="recommend btn btn-sm btn-secondary btn-block my-1">추천</a>
         </div>
         <div class="col-11">  <!-- 답변영역 -->
@@ -103,10 +102,10 @@
                     </div>
                     {% if request.user == answer.author %}
                     <div class="my-3">
-                        <a href="{% url 'pybo:answer_modify' answer.id  %}"
+                        <a href="{% url 'beanbrief:answer_modify' answer.id  %}"
                            class="btn btn-sm btn-outline-secondary">수정</a>
                         <a href="#" class="delete btn btn-sm btn-outline-secondary "
-                           data-uri="{% url 'pybo:answer_delete' answer.id  %}">삭제</a>
+                           data-uri="{% url 'beanbrief:answer_delete' answer.id  %}">삭제</a>
                     </div>
                     {% endif %}
                     {% if answer.comment_set.count > 0 %}
@@ -122,16 +121,16 @@
                                 {% endif %}
                             </span>
                             {% if request.user == comment.author %}
-                            <a href="{% url 'pybo:comment_modify_answer' comment.id  %}" class="small">수정</a>,
+                            <a href="{% url 'beanbrief:comment_modify_answer' comment.id  %}" class="small">수정</a>,
                             <a href="#" class="small delete"
-                               data-uri="{% url 'pybo:comment_delete_answer' comment.id  %}">삭제</a>
+                               data-uri="{% url 'beanbrief:comment_delete_answer' comment.id  %}">삭제</a>
                             {% endif %}
                         </div>
                     {% endfor %}
                     </div>
                     {% endif %}
                     <div>
-                        <a href="{% url 'pybo:comment_create_answer' answer.id  %}"
+                        <a href="{% url 'beanbrief:comment_create_answer' answer.id  %}"
                            class="small"><small>댓글 추가 ..</small></a>
                     </div>
                 </div>
@@ -139,7 +138,7 @@
         </div>
     </div>
     {% endfor %}
-    <form action="{% url 'pybo:answer_create' question.id %}" method="post" class="my-3">
+    <form action="{% url 'beanbrief:answer_create' question.id %}" method="post" class="my-3">
         {% csrf_token %}
         {% if form.errors %}
         <div class="alert alert-danger" role="alert">

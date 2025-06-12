@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from kagglehub import KaggleDatasetAdapter
 
 from django.core.management.base import BaseCommand
-from pybo.models import Beans
+from beanbrief.models import Beans
 
 
 load_dotenv()
