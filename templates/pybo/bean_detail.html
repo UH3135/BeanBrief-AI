@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-3">
+    <h2 class="border-bottom py-2">{{ bean.name }}</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">로스터리: {{ bean.roster }}</h5>
+            <div class="card-text">
+                <p><strong>원산지:</strong> {{ bean.origin }}</p>
+                <p><strong>로스팅:</strong> {{ bean.roast }}</p>
+                <p><strong>가격:</strong> {{ bean.price }}원</p>
+                <p><strong>평점:</strong> {{ bean.rating }}/5</p>
+                <hr>
+                <h6>리뷰</h6>
+                <p>{{ bean.review }}</p>
+            </div>
+            <a href="{% url 'pybo:bean_list' %}" class="btn btn-primary">목록으로</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
