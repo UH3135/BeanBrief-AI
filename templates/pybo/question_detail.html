@@ -44,6 +44,12 @@
                            data-uri="{% url 'pybo:question_delete' question.id  %}">삭제</a>
                     </div>
                     {% endif %}
+                    {% if question.file %}
+                    <div class="mt-3">
+                        <strong>첨부파일:</strong>
+                        <a href="{{ question.file.url }}" download>{{ question.file.name|basename }}</a>
+                    </div>
+                    {% endif %}
                     <!-- 질문 댓글 Start -->
                     {% if question.comment_set.count > 0 %}
                     <div class="mt-3">
