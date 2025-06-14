@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+import os
 
 from ..forms import QuestionForm
 from ..models import Question
@@ -13,12 +14,13 @@ def question_create(request):
     pybo 질문등록
     """
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
             QuestionService.create_question(
                 author=request.user,
                 subject=form.cleaned_data['subject'],
-                content=form.cleaned_data['content']
+                content=form.cleaned_data['content'],
+                file=form.cleaned_data.get('file')
             )
             return redirect('pybo:index')
     else:
@@ -38,12 +40,19 @@ def question_modify(request, question_id):
         return redirect('pybo:detail', question_id=question.id)
 
     if request.method == "POST":
-        form = QuestionForm(request.POST, instance=question)
+        form = QuestionForm(request.POST, request.FILES, instance=question)
         if form.is_valid():
+            if form.cleaned_data.get('delete_file') and question.file:
+                # 실제 파일 삭제
+                if os.path.exists(question.file.path):
+                    os.remove(question.file.path)
+                question.file = None
+                
             QuestionService.update_question(
                 question=question,
                 subject = form.cleaned_data['subject'],
-                content = form.cleaned_data['content']
+                content = form.cleaned_data['content'],
+                file=form.cleaned_data.get('file')
             )
             return redirect('pybo:detail', question_id=question.id)
     else:
