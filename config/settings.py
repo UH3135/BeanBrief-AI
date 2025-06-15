@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 from pathlib import Path
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,7 +39,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'rest_framework',
     'common.apps.CommonConfig',
-    'pybo.apps.PyboConfig',
+    'beanbrief.apps.BeanbriefConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -134,4 +135,20 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+# 에러 메시지 해결
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 로거 설정
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

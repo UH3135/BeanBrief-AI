@@ -1,8 +1,9 @@
 from django.urls import path
 
-from .views import base_views, question_views, answer_views, comment_views, vote_views, api_views
+from .views import base_views, question_views, answer_views, comment_views, vote_views, api_views, bean_views
 
-app_name = 'pybo'
+
+app_name = 'beanbrief'
 
 urlpatterns = [
     # base_views.py
@@ -34,4 +35,8 @@ urlpatterns = [
     # api_views.py
     path('api/questions/', api_views.QuestionListCreateAPIView.as_view(), name='question-list'),
     path('api/questions/<int:pk>/', api_views.QuestionRetrieveUpdateDestroyAPIView.as_view(), name='question-detail'),
+
+    # bean_views.py
+    path('beans/', bean_views.bean_list, name='bean_list'),
+    path('beans/<int:bean_id>/', bean_views.bean_detail, name='bean_detail'),
 ]
